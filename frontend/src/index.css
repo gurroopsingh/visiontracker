@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+/* ── Design Tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --color-brand: #4f46e5;
+  --color-brand-dark: #3730a3;
+  --color-brand-light: #e0e7ff;
+  --color-surface: #ffffff;
+  --color-bg: #f8fafc;
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --radius: 0.75rem;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.07), 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
+}
+
+/* ── Global Transitions ─────────────────────────────────────────────────────── */
+a,
+button {
+  transition: all 0.15s ease;
+}
+
+/* ── Toast Animations ───────────────────────────────────────────────────────── */
+@keyframes slide-in {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slide-in 0.25s ease forwards;
+}
+
+/* ── Skeleton Pulse ─────────────────────────────────────────────────────────── */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: #e2e8f0;
+  border-radius: 0.5rem;
+}
