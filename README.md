@@ -89,7 +89,7 @@ Node.js + Express (localhost:5000)
   └─ Error middleware
        │
        ▼ Mongoose
-MongoDB (localhost:27017/visiontracker)
+MongoDB (Local / Automatic In-Memory Fallback)
   └─ users collection
   └─ items collection
 ```
@@ -105,14 +105,18 @@ visiontracker/
 ├── backend/
 │   ├── src/
 │   │   ├── config/db.js
-│   │   ├── controllers/authController.js
-│   │   ├── controllers/itemController.js
-│   │   ├── middleware/authMiddleware.js
-│   │   ├── middleware/errorMiddleware.js
-│   │   ├── models/User.js
-│   │   ├── models/Item.js
-│   │   ├── routes/authRoutes.js
-│   │   ├── routes/itemRoutes.js
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   └── itemController.js
+│   │   ├── middleware/
+│   │   │   ├── authMiddleware.js
+│   │   │   └── errorMiddleware.js
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   └── Item.js
+│   │   ├── routes/
+│   │   │   ├── authRoutes.js
+│   │   │   └── itemRoutes.js
 │   │   ├── utils/generateToken.js
 │   │   └── server.js
 │   ├── .env.example
@@ -150,11 +154,14 @@ visiontracker/
 │   └── package.json
 │
 ├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── CLO-MAPPING.md
+│   ├── screenshots/
 │   ├── API.md
+│   ├── ARCHITECTURE.md
+│   ├── AUDIT-REPORT.md
+│   ├── CLO-MAPPING.md
 │   └── PHASE-1.md
 │
+├── .gitignore
 └── README.md
 ```
 
@@ -165,8 +172,8 @@ visiontracker/
 ### Prerequisites
 
 - **Node.js** v18 or higher — [nodejs.org](https://nodejs.org)
-- **MongoDB** running locally on port `27017` — [mongodb.com](https://www.mongodb.com/try/download/community)
 - **npm** (included with Node.js)
+- **MongoDB** *(Optional)* — The application will attempt to connect to a local MongoDB instance. If unavailable, it automatically falls back to an **in-memory database** for development/evaluation purposes (note: in-memory data is not persistent across server restarts).
 
 ---
 
@@ -286,7 +293,7 @@ See [`docs/CLO-MAPPING.md`](docs/CLO-MAPPING.md) for the full detailed mapping w
 
 ## Phase 1 Scope
 
-Phase 1 implements the full frontend and backend foundation. All CLO topics from the syllabus are implemented and can be demonstrated during the viva.
+Phase 1 implements the frontend and backend CLO topics planned for the first evaluation and provides the foundation for the remaining advanced CLO requirements in Phase 2.
 
 ## Phase 2 Planned Scope
 
@@ -300,14 +307,25 @@ Phase 1 implements the full frontend and backend foundation. All CLO topics from
 
 ---
 
+## Screenshots
+
+<div align="center">
+  <img src="docs/screenshots/Dashboard.png" alt="Dashboard" width="48%">
+  <img src="docs/screenshots/Lost Items.png" alt="Lost Items Feed" width="48%">
+  <img src="docs/screenshots/Report Found.png" alt="Report Found Item" width="48%">
+  <img src="docs/screenshots/My Profile.png" alt="User Profile" width="48%">
+  <img src="docs/screenshots/13-api-auth-me.png" alt="API Auth Me" width="48%">
+  <img src="docs/screenshots/14-api-get-items.png" alt="API Get Items" width="48%">
+</div>
+
+---
+
 ## Team Contribution
 
-| Member | Modules Owned | Commits |
-|--------|--------------|---------|
-| Member 1 | Backend foundation, Express API, Mongoose models | ≥ 3 |
-| Member 2 | AuthContext, ProtectedRoute, Login/Register pages | ≥ 3 |
-| Member 3 | Dashboard, Item feeds, Item detail, Profile | ≥ 3 |
-| Member 4 | Report forms, Documentation, README | ≥ 3 |
+| Member | Modules Owned |
+|--------|--------------|
+| **Ishpreet Singh** | Project initialization, Frontend Architecture, Tailwind UI, Landing/404 pages |
+| **Gurroop Singh** | Authentication UI, Context API, React Router, Global State, MongoDB fallback |
+| **Himanshu Bansal** | Express REST API, MongoDB Schemas, JWT Security, Lost & Found feature interfaces |
 
-> Each member's work is identifiable through git commit authorship.  
-> Run `git log --oneline --author="Name"` to see per-member commits.
+> Detailed contribution mapping to course lectures is available in [`docs/AUDIT-REPORT.md`](docs/AUDIT-REPORT.md).
