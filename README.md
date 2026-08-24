@@ -310,12 +310,12 @@ Phase 1 implements the frontend and backend CLO topics planned for the first eva
 ## Screenshots
 
 <div align="center">
-  <img src="docs/screenshots/Dashboard.png" alt="Dashboard" width="48%">
-  <img src="docs/screenshots/Lost Items.png" alt="Lost Items Feed" width="48%">
-  <img src="docs/screenshots/Report Found.png" alt="Report Found Item" width="48%">
-  <img src="docs/screenshots/My Profile.png" alt="User Profile" width="48%">
-  <img src="docs/screenshots/13-api-auth-me.png" alt="API Auth Me" width="48%">
-  <img src="docs/screenshots/14-api-get-items.png" alt="API Get Items" width="48%">
+  <img src="docs/Screenshots/Dashboard.png" alt="Dashboard" width="48%">
+  <img src="docs/Screenshots/Lost Items.png" alt="Lost Items Feed" width="48%">
+  <img src="docs/Screenshots/Report Found.png" alt="Report Found Item" width="48%">
+  <img src="docs/Screenshots/My Profile.png" alt="User Profile" width="48%">
+  <img src="docs/Screenshots/13-api-auth-me.png" alt="API Auth Me" width="48%">
+  <img src="docs/Screenshots/14-api-get-items.png" alt="API Get Items" width="48%">
 </div>
 
 ---
