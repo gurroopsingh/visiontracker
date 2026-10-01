@@ -1,10 +1,14 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import logger from "../utils/logger.js";
 
 /**
  * Middleware that verifies a JWT from the Authorization header.
  * Attaches the authenticated user document to req.user.
  * Use on any route that requires authentication.
+ *
+ * Logs all authentication failures with enough context for auditing
+ * without exposing sensitive data (no token values in logs).
  */
 const protect = async (req, res, next) => {
   let token;
@@ -17,6 +21,12 @@ const protect = async (req, res, next) => {
   }
 
   if (!token) {
+    logger.warn("Auth failed: no token provided", {
+      event: "auth_no_token",
+      path: req.path,
+      method: req.method,
+      ip: req.ip,
+    });
     return res.status(401).json({
       success: false,
       message: "Not authorized. No token provided.",
@@ -29,6 +39,11 @@ const protect = async (req, res, next) => {
     req.user = await User.findById(decoded.id).select("-password");
 
     if (!req.user) {
+      logger.warn("Auth failed: user no longer exists", {
+        event: "auth_user_not_found",
+        userId: decoded.id,
+        path: req.path,
+      });
       return res
         .status(401)
         .json({ success: false, message: "User no longer exists." });
@@ -36,6 +51,12 @@ const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
+    logger.warn(`Auth failed: ${error.name}`, {
+      event: "auth_token_invalid",
+      errorName: error.name,
+      path: req.path,
+      ip: req.ip,
+    });
     return res
       .status(401)
       .json({ success: false, message: "Token is invalid or expired." });

@@ -5,10 +5,22 @@ import api from "./api.js";
  * All item-related API calls go through here.
  */
 
-/** Fetch all items with optional filters */
+/** Fetch all items with optional filters, pagination, and sorting
+ *  Supported params: type, category, status, search, page, limit, sort
+ */
 export const getItems = async (filters = {}) => {
   const { data } = await api.get("/items", { params: filters });
-  return data; // { success, count, items }
+  return data; // { success, count, total, page, pages, items }
+};
+
+/**
+ * Fetch items reported by the currently authenticated user.
+ * Calls GET /api/items/my — dedicated backend route (no client-side filtering).
+ * Supported params: type, status, page, limit, sort
+ */
+export const getMyItems = async (filters = {}) => {
+  const { data } = await api.get("/items/my", { params: filters });
+  return data; // { success, count, total, page, pages, items }
 };
 
 /** Fetch a single item by its MongoDB id */

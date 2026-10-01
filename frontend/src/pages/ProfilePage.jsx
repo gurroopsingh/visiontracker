@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import { getItems } from "../services/itemService.js";
+import { getMyItems } from "../services/itemService.js";
 import { Link } from "react-router-dom";
 import Spinner from "../components/Spinner.jsx";
 import Toast from "../components/Toast.jsx";
 
 /**
  * ProfilePage — shows user info, their lost reports, and found reports.
- * Demonstrates useEffect fetching data filtered by the logged-in user.
+ *
+ * Phase 2: Calls GET /api/items/my (a dedicated server-side endpoint that
+ * filters by the authenticated user) instead of fetching all items and
+ * filtering client-side. This is more efficient and correct.
  */
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -17,25 +20,22 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // useEffect: fetch user's own items when user is available
+  // Fetch user's own items from the dedicated /api/items/my endpoint
   useEffect(() => {
     if (!user) return;
 
     const fetchMyItems = async () => {
       setLoading(true);
       try {
+        // Two parallel requests: one for each type
+        // The backend filters by req.user._id — no client-side filtering needed
         const [lostData, foundData] = await Promise.all([
-          getItems({ type: "lost" }),
-          getItems({ type: "found" }),
+          getMyItems({ type: "lost" }),
+          getMyItems({ type: "found" }),
         ]);
 
-        // Filter client-side by reportedBy matching logged-in user
-        setMyLost(
-          lostData.items.filter((i) => i.reportedBy?._id === user.id)
-        );
-        setMyFound(
-          foundData.items.filter((i) => i.reportedBy?._id === user.id)
-        );
+        setMyLost(lostData.items);
+        setMyFound(foundData.items);
       } catch (err) {
         setError(err.message);
       } finally {

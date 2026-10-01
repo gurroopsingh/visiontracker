@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VisionTracker — Admin Diagnostics</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #1e293b;
+    }
+    .logo { font-size: 2rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; }
+    h1 span { color: #6366f1; }
+    .subtitle { font-size: 0.8rem; color: #64748b; margin-top: 0.25rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .card-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.75rem;
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .status-row:last-child { margin-bottom: 0; }
+    .status-label { font-size: 0.875rem; color: #94a3b8; }
+    .status-value { font-size: 0.875rem; font-weight: 600; color: #f1f5f9; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-green  { background: #052e16; color: #4ade80; }
+    .badge-red    { background: #450a0a; color: #f87171; }
+    .badge-yellow { background: #1c1904; color: #facc15; }
+    .badge-blue   { background: #0c1a2e; color: #60a5fa; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      color: #64748b;
+      font-weight: 600;
+      border-bottom: 1px solid #334155;
+    }
+    td { padding: 0.5rem 0.75rem; color: #cbd5e1; }
+    tr:hover td { background: #263044; }
+    code {
+      background: #0f172a;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: #a5b4fc;
+    }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.75rem;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="logo">🎯</span>
+      <div>
+        <h1>VisionTracker <span>Admin</span></h1>
+        <p class="subtitle">Diagnostics &amp; Health Dashboard — <%= env %></p>
+      </div>
+    </header>
+
+    <!-- Status Cards -->
+    <div class="grid">
+
+      <!-- App Info -->
+      <div class="card">
+        <p class="card-title">Application</p>
+        <div class="status-row">
+          <span class="status-label">Name</span>
+          <span class="status-value"><%= appName %></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Version</span>
+          <span class="status-value"><%= appVersion %></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Environment</span>
+          <span class="badge badge-<%= env === 'production' ? 'green' : 'yellow' %>">
+            <span class="dot"></span> <%= env %>
+          </span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Port</span>
+          <span class="status-value"><%= port %></span>
+        </div>
+      </div>
+
+      <!-- Runtime -->
+      <div class="card">
+        <p class="card-title">Runtime</p>
+        <div class="status-row">
+          <span class="status-label">Node.js</span>
+          <span class="status-value"><%= nodeVersion %></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Platform</span>
+          <span class="status-value"><%= platform %></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Uptime</span>
+          <span class="status-value"><%= uptime %></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Memory (RSS)</span>
+          <span class="status-value"><%= memoryMB %> MB</span>
+        </div>
+      </div>
+
+      <!-- MongoDB -->
+      <div class="card">
+        <p class="card-title">MongoDB</p>
+        <div class="status-row">
+          <span class="status-label">Status</span>
+          <span class="badge badge-<%= dbStatus === 'connected' ? 'green' : 'red' %>">
+            <span class="dot"></span> <%= dbStatus %>
+          </span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Host</span>
+          <span class="status-value"><%= dbHost %></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Database</span>
+          <span class="status-value"><%= dbName %></span>
+        </div>
+      </div>
+
+      <!-- API Status -->
+      <div class="card">
+        <p class="card-title">API</p>
+        <div class="status-row">
+          <span class="status-label">Status</span>
+          <span class="badge badge-green">
+            <span class="dot"></span> running
+          </span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Base URL</span>
+          <code>/api</code>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Rate Limit</span>
+          <span class="status-value">100 req / 15 min</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Auth Limit</span>
+          <span class="status-value">15 req / 15 min</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Registered Endpoints -->
+    <div class="card">
+      <p class="card-title" style="margin-bottom:1rem;">Registered API Endpoints</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Auth</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>GET</code></td><td><code>/api/health</code></td><td>—</td><td>Health check</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/auth/register</code></td><td>Public</td><td>Register new user</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/auth/login</code></td><td>Public</td><td>Login</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/auth/me</code></td><td>JWT</td><td>Get own profile</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/items</code></td><td>Public</td><td>List items (filters, pagination, sort)</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/items/my</code></td><td>JWT</td><td>Current user's items</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/items/:id</code></td><td>Public</td><td>Single item</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/items/lost</code></td><td>JWT</td><td>Report lost item</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/items/found</code></td><td>JWT</td><td>Report found item</td></tr>
+          <tr><td><code>PUT</code></td><td><code>/api/items/:id</code></td><td>JWT + owner</td><td>Update item</td></tr>
+          <tr><td><code>DELETE</code></td><td><code>/api/items/:id</code></td><td>JWT + owner</td><td>Delete item</td></tr>
+          <tr><td><code>GET</code></td><td><code>/admin</code></td><td>Secret</td><td>This diagnostics page</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <span>VisionTracker &copy; Chitkara University — 24CAI0303</span>
+      <span>Generated at <%= generatedAt %></span>
+    </footer>
+  </div>
+</body>
+</html>
