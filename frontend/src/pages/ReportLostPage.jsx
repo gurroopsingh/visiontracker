@@ -30,6 +30,7 @@ const ReportLostPage = () => {
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   // UI state
   const [loading, setLoading] = useState(false);
@@ -60,16 +61,20 @@ const ReportLostPage = () => {
 
     setLoading(true);
     try {
-      await reportLostItem({
-        title,
-        description,
-        category,
-        brand,
-        color,
-        location,
-        date,
-        additionalDetails,
-      });
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("brand", brand);
+      formData.append("color", color);
+      formData.append("location", location);
+      formData.append("date", date);
+      formData.append("additionalDetails", additionalDetails);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      await reportLostItem(formData);
       setSuccess("Lost item reported successfully!");
       setTimeout(() => navigate("/dashboard/items/lost"), 1500);
     } catch (err) {
@@ -194,6 +199,32 @@ const ReportLostPage = () => {
             rows={2}
             className={inputClass}
           />
+        </Field>
+
+        {/* Image upload UI */}
+        <Field label="Photo (optional)" htmlFor="lost-image">
+          <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-indigo-300 transition-colors cursor-pointer">
+            <input
+              id="lost-image"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setImageFile(e.target.files[0])}
+            />
+            <label htmlFor="lost-image" className="cursor-pointer">
+              <svg className="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {imageFile ? (
+                <p className="text-sm text-indigo-600 font-medium">{imageFile.name}</p>
+              ) : (
+                <>
+                  <p className="text-sm text-slate-500 font-medium">Click to upload photo</p>
+                  <p className="text-xs text-slate-400 mt-0.5">AI image matching • PNG, JPG, WebP up to 10MB</p>
+                </>
+              )}
+            </label>
+          </div>
         </Field>
 
         {/* Submit */}

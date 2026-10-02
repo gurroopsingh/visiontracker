@@ -9,6 +9,7 @@ import {
   deleteItem,
 } from "../controllers/itemController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { upload, handleUploadError } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -22,17 +23,17 @@ router.get("/", getItems);
 router.get("/my", protect, getMyItems);
 
 // POST /api/items/lost  — report a lost item
-router.post("/lost", protect, reportLostItem);
+router.post("/lost", protect, upload.single("image"), handleUploadError, reportLostItem);
 
 // POST /api/items/found — report a found item
-router.post("/found", protect, reportFoundItem);
+router.post("/found", protect, upload.single("image"), handleUploadError, reportFoundItem);
 
 // ── Parameterised routes ──────────────────────────────────────────────────────
 // GET /api/items/:id    — single item (public)
 router.get("/:id", getItemById);
 
 // PUT /api/items/:id    — update (owner only)
-router.put("/:id", protect, updateItem);
+router.put("/:id", protect, upload.single("image"), handleUploadError, updateItem);
 
 // DELETE /api/items/:id — delete (owner only)
 router.delete("/:id", protect, deleteItem);

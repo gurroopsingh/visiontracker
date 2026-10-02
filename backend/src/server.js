@@ -76,6 +76,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── Static Files (Uploads) ────────────────────────────────────────────────────
+app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
+
 // ── Health Check (no rate limit — used by Docker health checks later) ─────────
 app.get("/api/health", (req, res) => {
   res.json({

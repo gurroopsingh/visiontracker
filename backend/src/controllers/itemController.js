@@ -211,6 +211,7 @@ const reportLostItem = async (req, res, next) => {
       date,
       additionalDetails,
       reportedBy: req.user._id,
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
     });
 
     const populated = await item.populate("reportedBy", "name email");
@@ -257,6 +258,7 @@ const reportFoundItem = async (req, res, next) => {
       date,
       additionalDetails,
       reportedBy: req.user._id,
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
     });
 
     const populated = await item.populate("reportedBy", "name email");
@@ -326,6 +328,10 @@ const updateItem = async (req, res, next) => {
         item[field] = req.body[field];
       }
     });
+
+    if (req.file) {
+      item.imageUrl = `/uploads/${req.file.filename}`;
+    }
 
     await item.save();
     await item.populate("reportedBy", "name email");

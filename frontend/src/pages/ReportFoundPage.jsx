@@ -59,17 +59,21 @@ const ReportFoundPage = () => {
 
     setLoading(true);
     try {
-      // Phase 1: send JSON payload (no file upload yet)
-      await reportFoundItem({
-        title,
-        description,
-        category,
-        brand,
-        color,
-        location,
-        date,
-        additionalDetails,
-      });
+      // Phase 2: send FormData payload to support image upload
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("brand", brand);
+      formData.append("color", color);
+      formData.append("location", location);
+      formData.append("date", date);
+      formData.append("additionalDetails", additionalDetails);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      await reportFoundItem(formData);
       setSuccess("Found item reported! Someone will be very grateful.");
       setTimeout(() => navigate("/dashboard/items/found"), 1500);
     } catch (err) {
@@ -207,7 +211,7 @@ const ReportFoundPage = () => {
               ) : (
                 <>
                   <p className="text-sm text-slate-500 font-medium">Click to upload photo</p>
-                  <p className="text-xs text-slate-400 mt-0.5">AI image matching in Phase 2 • PNG, JPG up to 10MB</p>
+                  <p className="text-xs text-slate-400 mt-0.5">AI image matching • PNG, JPG, WebP up to 10MB</p>
                 </>
               )}
             </label>
