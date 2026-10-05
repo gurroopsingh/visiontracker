@@ -41,7 +41,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  type: LoadBalancer # NodePort or LoadBalancer depending on cluster setup
+  type: NodePort  # NodePort supports explicit nodePort; use LoadBalancer if cloud LB is available (remove nodePort then)
   ports:
     - port: 80
       targetPort: 80

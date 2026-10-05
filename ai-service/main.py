@@ -85,6 +85,15 @@ def compute_embedding(image: Image.Image) -> np.ndarray:
     inputs = processor(images=image, return_tensors="pt")
     with torch.no_grad():
         features = model.get_image_features(**inputs)
+    # transformers >= 4.x may return a Tensor or a ModelOutput depending on version.
+    # Unwrap if needed.
+    if hasattr(features, "image_embeds"):
+        features = features.image_embeds
+    elif hasattr(features, "pooler_output"):
+        features = features.pooler_output
+    elif not isinstance(features, torch.Tensor):
+        # Last resort: extract first tensor value from dataclass
+        features = list(features.values())[0]
     # L2-normalise so cosine similarity == dot product
     features = features / features.norm(dim=-1, keepdim=True)
     return features.squeeze().cpu().numpy()
@@ -180,6 +189,7 @@ async def match(
     return {
         "success": True,
         "similarity": round(similarity, 6),
+        "match": is_match,        # alias used by Node.js matchService.js
         "is_match": is_match,
         "threshold": AI_MATCH_THRESHOLD,
         "model": MODEL_NAME,

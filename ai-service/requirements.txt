@@ -1,6 +1,11 @@
+# AI Service Python Dependencies
+# Use CPU-only PyTorch to keep image size manageable (~150MB vs ~550MB for CUDA)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.3.0
+torchvision>=0.18.0
+
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
-torch>=2.3.0
 transformers>=4.41.0
 Pillow>=10.3.0
 numpy>=1.26.4
