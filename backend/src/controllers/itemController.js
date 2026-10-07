@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Item from "../models/Item.js";
 import logger from "../utils/logger.js";
+import { getCache, setCache, invalidateCache } from "../config/redis.js";
 
 // Allowed sort fields — whitelist prevents arbitrary field injection
 const ALLOWED_SORT_FIELDS = new Set([
@@ -61,6 +62,14 @@ const getItems = async (req, res, next) => {
       ];
     }
 
+    // ── Redis Cache Check ─────────────────────────────────────────────────────
+    const cacheKey = `items:${JSON.stringify({ type, category, status, search, sortObj, skip, limit })}`;
+    const cachedData = await getCache(cacheKey);
+    if (cachedData) {
+      logger.debug("Items fetched from cache", { event: "items_listed_cache", page, limit });
+      return res.status(200).json(cachedData);
+    }
+
     // ── Query ─────────────────────────────────────────────────────────────────
     const [items, total] = await Promise.all([
       Item.find(filter)
@@ -71,22 +80,27 @@ const getItems = async (req, res, next) => {
       Item.countDocuments(filter),
     ]);
 
-    logger.debug("Items fetched", {
-      event: "items_listed",
+    logger.debug("Items fetched from DB", {
+      event: "items_listed_db",
       filter,
       page,
       limit,
       total,
     });
 
-    res.status(200).json({
+    const responseData = {
       success: true,
       count: items.length,
       total,
       page,
       pages: Math.ceil(total / limit),
       items,
-    });
+    };
+
+    // Store in cache (5 minutes TTL)
+    await setCache(cacheKey, responseData, 300);
+
+    res.status(200).json(responseData);
   } catch (error) {
     next(error);
   }
@@ -223,6 +237,9 @@ const reportLostItem = async (req, res, next) => {
       userId: req.user._id,
     });
 
+    // Invalidate item feed cache
+    await invalidateCache("items:*");
+
     res.status(201).json({ success: true, item: populated });
   } catch (error) {
     next(error);
@@ -269,6 +286,9 @@ const reportFoundItem = async (req, res, next) => {
       type: "found",
       userId: req.user._id,
     });
+
+    // Invalidate item feed cache
+    await invalidateCache("items:*");
 
     res.status(201).json({ success: true, item: populated });
   } catch (error) {
@@ -342,6 +362,9 @@ const updateItem = async (req, res, next) => {
       userId: req.user._id,
     });
 
+    // Invalidate item feed cache
+    await invalidateCache("items:*");
+
     res.status(200).json({ success: true, item });
   } catch (error) {
     next(error);
@@ -389,6 +412,9 @@ const deleteItem = async (req, res, next) => {
       itemId: item._id,
       userId: req.user._id,
     });
+
+    // Invalidate item feed cache
+    await invalidateCache("items:*");
 
     res.status(200).json({ success: true, message: "Item deleted." });
   } catch (error) {
