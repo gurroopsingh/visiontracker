@@ -43,11 +43,20 @@ const matchSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Owner action on the match
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "rejected"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
 
-// Index for fast lookup of matches for a lost or found item
+// Unique compound index — prevents duplicate matches for the same found+lost pair
+// Also powers the findOneAndUpdate upsert in matchService.js
+matchSchema.index({ foundItem: 1, lostItem: 1 }, { unique: true });
+// Additional single-field indexes for fast per-item lookups
 matchSchema.index({ lostItem: 1 });
 matchSchema.index({ foundItem: 1 });
 
