@@ -186,10 +186,10 @@ const ItemDetailPage = () => {
         {isOwner && (
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
             <Link
-              to={`/dashboard/items`}
+              to={`/dashboard/items/${id}/edit`}
               className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
-              Edit (Phase 2)
+              Edit Report
             </Link>
 
             {confirmDelete ? (

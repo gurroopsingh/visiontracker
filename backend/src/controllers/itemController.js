@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Item from "../models/Item.js";
 import logger from "../utils/logger.js";
 import { getCache, setCache, invalidateCache } from "../config/redis.js";
+import { runMatchSearch } from "../services/matchService.js";
 
 // Allowed sort fields — whitelist prevents arbitrary field injection
 const ALLOWED_SORT_FIELDS = new Set([
@@ -289,6 +290,10 @@ const reportFoundItem = async (req, res, next) => {
 
     // Invalidate item feed cache
     await invalidateCache("items:*");
+
+    // Trigger async AI match search (fire-and-forget — does not block response)
+    // Only runs if the found item has an image; errors are swallowed inside runMatchSearch
+    setImmediate(() => runMatchSearch(item));
 
     res.status(201).json({ success: true, item: populated });
   } catch (error) {

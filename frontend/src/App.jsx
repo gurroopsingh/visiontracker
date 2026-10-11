@@ -16,6 +16,7 @@ import ItemDetailPage from "./pages/ItemDetailPage.jsx";
 import ReportLostPage from "./pages/ReportLostPage.jsx";
 import ReportFoundPage from "./pages/ReportFoundPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import EditItemPage from "./pages/EditItemPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 /**
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/dashboard/report-lost" element={<ReportLostPage />} />
             <Route path="/dashboard/report-found" element={<ReportFoundPage />} />
             <Route path="/dashboard/profile" element={<ProfilePage />} />
+            <Route path="/dashboard/items/:id/edit" element={<EditItemPage />} />
 
             {/* Redirect bare /dashboard/items to lost feed */}
             <Route
