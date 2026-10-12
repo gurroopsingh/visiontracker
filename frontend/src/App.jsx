@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { SocketProvider } from "./context/SocketContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import DashboardLayout from "./layouts/DashboardLayout.jsx";
 
@@ -37,7 +38,8 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 const App = () => (
   <BrowserRouter>
     <AuthProvider>
-      <Routes>
+      <SocketProvider>
+        <Routes>
         {/* ── Public Routes ──────────────────────────── */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -68,6 +70,7 @@ const App = () => (
         {/* ── 404 Fallback ───────────────────────────── */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </SocketProvider>
     </AuthProvider>
   </BrowserRouter>
 );

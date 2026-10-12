@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useSocket } from "../context/SocketContext.jsx";
+import Toast from "../components/Toast.jsx";
 
 const navItems = [
   {
@@ -62,8 +64,26 @@ const navItems = [
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
+  const { socket } = useSocket();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notification, setNotification] = useState(null);
+
+  useEffect(() => {
+    if (!socket) return;
+    
+    const handleNotification = (data) => {
+      setNotification({ message: data.message || "New notification", type: "success" });
+      // Auto-clear after 5 seconds
+      setTimeout(() => setNotification(null), 5000);
+    };
+
+    socket.on("notification", handleNotification);
+
+    return () => {
+      socket.off("notification", handleNotification);
+    };
+  }, [socket]);
 
   const handleLogout = () => {
     logout();
@@ -182,7 +202,12 @@ const DashboardLayout = () => {
         </header>
 
         {/* Page */}
-        <main className="flex-1 p-4 lg:p-6">
+        <main className="flex-1 p-4 lg:p-6 relative">
+          {notification && (
+            <div className="absolute top-4 right-4 z-50 shadow-lg">
+              <Toast message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+            </div>
+          )}
           <Outlet />
         </main>
       </div>

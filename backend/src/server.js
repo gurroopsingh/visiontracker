@@ -33,6 +33,7 @@ import itemRoutes from "./routes/itemRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import { apiLimiter, authLimiter } from "./middleware/rateLimitMiddleware.js";
 import logger from "./utils/logger.js";
+import { initSocket } from "./config/socket.js";
 
 // ESM-compatible __dirname (path + url core modules)
 const __filename = fileURLToPath(import.meta.url);
@@ -149,6 +150,9 @@ app.use(errorHandler);
 // Socket.IO can be attached to the same server in Phase 2F.
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
+
+// Initialize Socket.IO
+initSocket(server);
 
 server.listen(PORT, () => {
   logger.info(`VisionTracker API running on http://localhost:${PORT}`, {
