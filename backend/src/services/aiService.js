@@ -43,7 +43,7 @@ export const compareImages = async (imagePathA, imagePathB) => {
 
     const res = await axios.post(`${AI_SERVICE_URL}/match`, form, {
       headers: form.getHeaders(),
-      timeout: 30000,
+      timeout: 60000, // 60s — CLIP on CPU can be slow on first inference
     });
 
     logger.info("AI image comparison complete", {
@@ -55,9 +55,13 @@ export const compareImages = async (imagePathA, imagePathB) => {
 
     return res.data;
   } catch (error) {
-    logger.warn(`AI service unavailable or error: ${error.message}`, {
+    logger.warn(`[aiService] AI service error: ${error.message}`, {
       event: "ai_service_error",
       error: error.message,
+      status: error.response?.status,
+      detail: error.response?.data?.detail,
+      imagePathA,
+      imagePathB,
     });
     return null; // Graceful fallback — never crash the main API
   }
