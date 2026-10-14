@@ -20,12 +20,14 @@ export const initSocket = (server) => {
   io.on("connection", (socket) => {
     logger.debug(`New client connected: ${socket.id}`, { event: "socket_connect" });
 
-    // Client emits this event when they log in or load the dashboard
+    // Client emits this event when they log in or load the dashboard.
+    // Always coerce to String so the map key is always a consistent type.
     socket.on("register", (userId) => {
-      userSocketMap.set(userId, socket.id);
-      logger.debug(`User ${userId} registered to socket ${socket.id}`, {
+      const uid = String(userId);
+      userSocketMap.set(uid, socket.id);
+      logger.debug(`User ${uid} registered to socket ${socket.id}`, {
         event: "socket_register",
-        userId,
+        userId: uid,
         socketId: socket.id,
       });
     });
@@ -52,13 +54,23 @@ export const initSocket = (server) => {
  * Emit an event to a specific user
  */
 export const emitToUser = (userId, eventName, payload) => {
-  if (!io) return;
-  const socketId = userSocketMap.get(userId.toString());
+  if (!io) {
+    logger.warn("[socket] emitToUser called before Socket.IO was initialised", { userId, eventName });
+    return;
+  }
+  const uid = String(userId); // always a string for reliable Map lookup
+  const socketId = userSocketMap.get(uid);
   if (socketId) {
     io.to(socketId).emit(eventName, payload);
-    logger.debug(`Event ${eventName} emitted to user ${userId}`, {
+    logger.debug(`[socket] Event '${eventName}' emitted to user ${uid} (socket ${socketId})`, {
       event: "socket_emit_user",
-      userId,
+      userId: uid,
+      eventName,
+    });
+  } else {
+    logger.debug(`[socket] User ${uid} has no active socket — notification not delivered in real-time`, {
+      event: "socket_emit_user_offline",
+      userId: uid,
       eventName,
     });
   }
