@@ -3,7 +3,7 @@ node_modules/
 .pnp
 .pnp.js
 
-# Environment files
+# Environment files — never commit secrets
 .env
 .env.local
 .env.development.local
@@ -36,3 +36,23 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Uploaded files (user content — not for version control)
+backend/uploads/
+uploads/
+
+# Python virtual env and cache (ai-service)
+ai-service/venv/
+ai-service/__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# HuggingFace model cache (populated at container runtime)
+.cache/
+
+# Root-level e2e test duplicate (canonical copy lives in backend/)
+/e2e_test_docker.mjs
+
+# Test fixture junk files
+backend/test_images/bad_file.txt
