@@ -13,8 +13,8 @@ const features = [
   },
   {
     icon: "🤖",
-    title: "AI Matching (Phase 2)",
-    desc: "Our upcoming AI engine will automatically match lost reports with found items using visual similarity.",
+    title: "AI Image Matching",
+    desc: "Upload a photo when reporting. Our CLIP-powered AI automatically matches found items to lost reports using visual similarity.",
   },
   {
     icon: "📬",

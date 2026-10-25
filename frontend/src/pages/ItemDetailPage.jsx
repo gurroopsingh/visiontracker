@@ -164,20 +164,20 @@ const ItemDetailPage = () => {
           </div>
         )}
 
-        {/* Image placeholder */}
         <div className="pt-4 border-t border-slate-100">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
             Image
           </p>
           {item.imageUrl ? (
             <img
-              src={item.imageUrl}
+              src={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${item.imageUrl}`}
               alt={item.title}
-              className="w-full max-h-64 object-cover rounded-xl"
+              className="w-full max-h-64 object-cover rounded-xl border border-slate-100"
+              onError={(e) => { e.target.style.display = "none"; }}
             />
           ) : (
             <div className="w-full h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-sm">
-              No image provided — AI image matching available in Phase 2
+              No image uploaded
             </div>
           )}
         </div>

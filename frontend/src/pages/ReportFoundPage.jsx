@@ -18,7 +18,8 @@ const CATEGORIES = [
 
 /**
  * ReportFoundPage — controlled form for reporting a found item.
- * Also includes image upload UI (FormData ready, backend integration Phase 2).
+ * Sends a multipart/form-data payload supporting image upload (Multer).
+ * On success the backend runs an async AI match scan against active lost items.
  */
 const ReportFoundPage = () => {
   const [title, setTitle] = useState("");
@@ -29,7 +30,7 @@ const ReportFoundPage = () => {
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
-  const [imageFile, setImageFile] = useState(null); // Phase 2: upload via Multer
+  const [imageFile, setImageFile] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -59,7 +60,7 @@ const ReportFoundPage = () => {
 
     setLoading(true);
     try {
-      // Phase 2: send FormData payload to support image upload
+      // Send multipart/form-data payload to support image upload
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);

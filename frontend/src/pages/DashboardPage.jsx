@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { getItems } from "../services/itemService.js";
+import { getItems, getMatches } from "../services/itemService.js";
 import Spinner from "../components/Spinner.jsx";
 import Toast from "../components/Toast.jsx";
 
@@ -16,6 +16,7 @@ const DashboardPage = () => {
   // State for fetched data
   const [lostCount, setLostCount] = useState(0);
   const [foundCount, setFoundCount] = useState(0);
+  const [matchCount, setMatchCount] = useState(0);
   const [recentItems, setRecentItems] = useState([]);
 
   // UI state
@@ -37,6 +38,13 @@ const DashboardPage = () => {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 6);
         setRecentItems(combined);
+        // Fetch AI match count (Phase 2 — requires auth; gracefully skip if fails)
+        try {
+          const matchData = await getMatches();
+          setMatchCount(matchData.count ?? matchData.matches?.length ?? 0);
+        } catch {
+          // not authenticated or no matches yet — silently ignore
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -91,7 +99,7 @@ const DashboardPage = () => {
         />
         <StatCard
           label="AI Matches"
-          value="Phase 2"
+          value={loading ? "—" : matchCount}
           color="text-violet-600"
           bg="bg-violet-50"
           icon="🤖"

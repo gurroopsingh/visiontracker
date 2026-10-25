@@ -52,3 +52,21 @@ export const deleteItem = async (id) => {
   const { data } = await api.delete(`/items/${id}`);
   return data; // { success, message }
 };
+
+/** Fetch AI matches for the logged-in user's lost items (Phase 2) */
+export const getMatches = async () => {
+  const { data } = await api.get("/items/matches");
+  return data; // { success, count, matches }
+};
+
+/** Accept an AI match (owner only) */
+export const acceptMatch = async (matchId) => {
+  const { data } = await api.patch(`/items/matches/${matchId}/accept`);
+  return data;
+};
+
+/** Reject an AI match (owner only) */
+export const rejectMatch = async (matchId) => {
+  const { data } = await api.patch(`/items/matches/${matchId}/reject`);
+  return data;
+};
